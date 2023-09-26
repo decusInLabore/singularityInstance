@@ -1,6 +1,10 @@
 # singularityInstance
 Set up Ubuntu singularity Instance on a Mac. This can be done in a similary fashion on a LINUX or Windows system. 
 
+The ready-build singularity instance can be started on nemo like so:
+ml Singularity/3.11.3
+singularity shell --bind  /nemo:/nemo,/camp:/camp /nemo/stp/babs/working/boeings/singularity_images/r431.ubuntu.22.04.sif
+
 ## Vagrant installation 
 
 ```{bash}
