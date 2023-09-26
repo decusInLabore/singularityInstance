@@ -119,9 +119,14 @@ $ pwd
 $ vagrant ssh-config > config.txt
 $ scp -F config.txt default:/home/vagrant/r431.ubuntu.22.04.* .
 ```
-For some R-installations, such as Seurat::SCTransform the following sequence is required:
+
+
+##Start Singularity Image
+```{bash}
+# For some R-installations, such as Seurat::SCTransform the following sequence is required:
 # mkdir -p ~/.R
 # echo 'CXX17 = g++-11 -std=gnu++17 -fPIC' > ~/.R/Makevars
-# ml Singularity/3.11.3
-# singularity shell --bind  /nemo:/nemo,/camp:/camp /nemo/stp/babs/working/boeings/singularity_images/r431.ubuntu.16.04.sif;
 
+ml Singularity/3.11.3
+singularity shell --bind  /nemo:/nemo,/camp:/camp /nemo/stp/babs/working/boeings/singularity_images/r431.ubuntu.22.04.sif;
+```
