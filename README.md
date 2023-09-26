@@ -13,6 +13,8 @@ R
 
 ## Vagrant installation 
 
+Please note, if you are using a Mac with an M1 chip, you'll have to modify the vagrant installation procedure as described here: https://www.unixarena.com/2022/09/virtual-machine-on-apple-mac-chip-m1-m2-fusion-vagrant.html/
+
 ```{bash}
 brew install --cask virtualbox && \
   brew install --cask vagrant && \
