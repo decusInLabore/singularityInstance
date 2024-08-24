@@ -6,7 +6,8 @@ The ready-build singularity instance can be started on nemo like so:
 ```{bash}
 ml Singularity/3.6.4
 
-singularity shell --bind  /nemo:/nemo,/camp:/camp /nemo/stp/babs/working/boeings/singularity_images/r431.ubuntu.22.04.sif
+## --cleanenv is optional. It prevents the transfer of host system environmental variables into the singularity container.  
+singularity shell --cleanenv --bind  /nemo:/nemo,/camp:/camp /nemo/stp/babs/working/boeings/singularity_images/r431.ubuntu.22.04.sif
 
 R
 ```
