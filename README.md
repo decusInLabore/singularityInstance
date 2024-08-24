@@ -4,7 +4,7 @@ Set up Ubuntu singularity Instance on a Mac. This can be done in a similary fash
 The ready-build singularity instance can be started on nemo like so:
 
 ```{bash}
-ml Singularity/3.11.3
+ml Singularity/3.6.4
 
 singularity shell --bind  /nemo:/nemo,/camp:/camp /nemo/stp/babs/working/boeings/singularity_images/r431.ubuntu.22.04.sif
 
