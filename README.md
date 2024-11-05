@@ -9,8 +9,6 @@ ml Singularity/3.6.4
 ## --cleanenv is optional. It prevents the transfer of host system environmental variables into the singularity container.
 
 singularity shell --cleanenv --bind  /usr/bin/sbatch:/usr/bin/sbatch,/nemo:/nemo,/camp:/camp  /flask/apps/containers/all-singularity-images/r431.ubuntu.22.04.sif;
-
-R
 ```
 
 ## Vagrant installation 
