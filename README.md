@@ -34,10 +34,23 @@ Install Ubuntu, start virtual machine and ssh into it
 
 ```{bash}
 ## Get ubuntu version 23
-export VM=ubuntu/mantic64 && \
-    vagrant init $VM && \
-    vagrant up && \
-    vagrant ssh
+# export VM=ubuntu/mantic64 && \
+#    vagrant init $VM && \
+#    vagrant up && \
+#    vagrant ssh
+
+# Correct the Vagrant box name
+export VM=ubuntu/jammy64
+
+# Initialize the Vagrant environment
+vagrant init $VM
+
+# Start the Vagrant virtual machine
+vagrant up
+
+# SSH into the Vagrant virtual machine
+vagrant ssh
+
 ```
 
 ## Install latest singularity version in the vagrant machine
