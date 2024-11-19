@@ -13,9 +13,31 @@ singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp /flask/apps/containe
 
 ## Vagrant installation 
 
-Please note, if you are using a **Mac with an M1 chip**, you'll have to modify the vagrant installation procedure as described [here](https://www.unixarena.com/2022/09/virtual-machine-on-apple-mac-chip-m1-m2-fusion-vagrant.html/).
+Please note, if you are using a **Mac with an M1/M2 chip**, you'll have to modify the vagrant installation procedure as described [here](https://www.unixarena.com/2022/09/virtual-machine-on-apple-mac-chip-m1-m2-fusion-vagrant.html/). At present, vagrant does not work with a Mac M3 chip. 
+
+The easiest at present is to use a Windows 10 machine as outlined [here](https://medium.com/@botdotcom/installing-virtualbox-and-vagrant-on-windows-10-2e5cbc6bd6ad). 
+
+Open the Windows command prompt do
 
 ```{bash}
+# Navigate to a suitable directory
+
+mkdir vagrant_machine
+cd vagrant_machine
+
+vagrant box add ubuntu/trusty64
+
+vagrant init ubuntu/trusty64
+
+vagrant up
+
+# Log into the machine
+vagrant ssh
+
+```
+
+```{bash}
+Alternative (Mac non M1/M2/M3)
 brew install --cask virtualbox && \
   brew install --cask vagrant && \
   brew install --cask vagrant-manager
