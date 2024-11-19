@@ -25,9 +25,8 @@ Open the Windows command prompt do
 mkdir vagrant_machine
 cd vagrant_machine
 
-vagrant box add ubuntu/trusty64
-
-vagrant init ubuntu/trusty64
+vagrant box add ubuntu/jammy64
+vagrant init ubuntu/jammy64
 
 vagrant up
 
