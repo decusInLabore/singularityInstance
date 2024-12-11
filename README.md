@@ -25,6 +25,8 @@ Open the Windows command prompt do
 mkdir vagrant_machine
 cd vagrant_machine
 
+vagrant destroy
+
 vagrant box add ubuntu/jammy64
 vagrant init ubuntu/jammy64
 
