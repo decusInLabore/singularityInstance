@@ -30,6 +30,9 @@ vagrant destroy
 vagrant box add ubuntu/jammy64
 vagrant init ubuntu/jammy64
 
+# Install vagrant scp
+vagrant plugin install vagrant-scp
+
 vagrant up
 
 # Log into the machine
@@ -67,9 +70,6 @@ export VM=ubuntu/jammy64
 
 # Initialize the Vagrant environment
 vagrant init $VM
-
-# Install vagrant scp
-vagrant plugin install vagrant-scp
 
 # Start the Vagrant virtual machine
 vagrant up
