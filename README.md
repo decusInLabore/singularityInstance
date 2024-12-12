@@ -33,6 +33,9 @@ vagrant init ubuntu/jammy64
 # Install vagrant scp
 vagrant plugin install vagrant-scp
 
+# Upload def file into instance
+vagrant scp r442.ubuntu.22.04.def :r442.ubuntu.22.04.def
+
 vagrant up
 
 # Log into the machine
@@ -74,8 +77,6 @@ vagrant init $VM
 # Start the Vagrant virtual machine
 vagrant up
 
-# Upload def file into instance
-vagrant scp r442.ubuntu.22.04.def :r442.ubuntu.22.04.def
 
 # SSH into the Vagrant virtual machine
 vagrant ssh
