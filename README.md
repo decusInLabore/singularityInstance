@@ -172,10 +172,9 @@ sudo apt-get install docker.io
 
 ## Export environment
 ```{bash}
-$ pwd
-/Users/boeings/Desktop/Stefan/devLocal/devSingularityRcontainer/vm-singularity
-$ vagrant ssh-config > config.txt
-$ scp -F config.txt default:/home/vagrant/r431.ubuntu.22.04.* .
+vagrant ssh-config > config.txt
+vagrant scp -F config.txt default:/home/vagrant/r442.ubuntu.22.04.* .
+
 ```
 
 
