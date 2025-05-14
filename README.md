@@ -17,6 +17,10 @@ Please note, if you are using a **Mac with an M1/M2 chip**, you'll have to modif
 
 The easiest at present is to use a Windows 10 machine as outlined [here](https://medium.com/@botdotcom/installing-virtualbox-and-vagrant-on-windows-10-2e5cbc6bd6ad). 
 
+If vagrant is not installed on your Windows PC, you need to start with this. 
+Download Vagrant and install: [Link](https://developer.hashicorp.com/vagrant/install)
+
+
 Open the Windows command prompt do
 
 ```{bash}
