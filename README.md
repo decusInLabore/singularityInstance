@@ -40,10 +40,13 @@ vagrant init ubuntu/jammy64
 vagrant plugin install vagrant-scp
 vagrant plugin install vagrant-disksize
 
+# Starting the vagrant LINUX machine
+vagrant up
+
 # Upload def file into instance
 vagrant scp r442.ubuntu.22.04.def :r442.ubuntu.22.04.def
 
-vagrant up
+
 
 # Log into the machine
 vagrant ssh
