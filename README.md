@@ -42,8 +42,9 @@ vagrant plugin install vagrant-disksize
 
 # Starting the vagrant LINUX machine
 vagrant up
+exit
 
-# Upload def file into instance
+# Upload def file into instance via vagrant scp (from the host sytem - exit vagrant)
 vagrant scp r442.ubuntu.22.04.def :r442.ubuntu.22.04.def
 
 
