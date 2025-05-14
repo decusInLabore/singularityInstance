@@ -40,6 +40,22 @@ vagrant init ubuntu/jammy64
 vagrant plugin install vagrant-scp
 vagrant plugin install vagrant-disksize
 
+# Edit vagrant file
+Add to the vagrant file:
+
+```{bash}
+config.vm.boot_timeout = 6000
+
+config.vm.provider "virtualbox" do |vb|
+  vb.memory = "4096" # Increase memory
+end
+```
+Once the vagrant file is edited, run 
+
+```{bash}
+vagrant reload --provision
+```
+
 # Starting the vagrant LINUX machine
 vagrant up
 exit
