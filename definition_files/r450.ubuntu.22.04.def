@@ -1,0 +1,271 @@
+BootStrap: docker
+From: ubuntu:22.04
+ 
+%labels
+    APPLICATION_NAME R 4.5.0 and python 3.12 on Jammy 22.04
+    AUTHOR_Name Stefan Boeing
+    YEAR 2023
+ 
+%help
+    This container conatins:
+        R 4.5.0 and python 3.14 on Ubuntu
+ 
+
+%post
+    # Change to tmp directory to download temporary files
+    if [ ! -d /tmp/singularity-build ]; then
+      mkdir -p /tmp/singularity-build
+    fi
+ 
+    cd /tmp/singularity-build
+ 
+    echo "Installing compilers and libraries"
+    apt-get -qq -y update
+   
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get -qq install -y --no-install-recommends tzdata apt-utils software-properties-common
+ 
+    ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+    
+    
+    
+    apt-get -y update
+    apt-get -y --no-install-recommends upgrade
+    apt-get -y update
+
+
+
+    apt-get install -y --no-install-recommends \
+        libunwind-dev \
+        passwd \
+        bash \
+        coreutils \
+        autoconf \
+        automake \
+        build-essential \
+        bzip2 \
+        ca-certificates \
+        cmake \
+        curl \
+        fuse \
+        gfortran \
+        gcc \
+        g++ \
+        git \
+        gdal-bin \
+        libavfilter-dev \
+        libgdal-dev \
+        libtool \
+        libjpeg-dev \
+        libpng-dev \
+        libtiff-dev \
+        libatlas-base-dev \
+        libxml2-dev \
+        libcairo2-dev \
+        libeigen3-dev \
+        libcupti-dev \
+        libpcre2-dev \
+        libpcre3-dev \
+        libssl-dev \
+        libcurl4-openssl-dev \
+        libboost-dev \
+        libboost-system-dev \
+        libboost-thread-dev \
+        libboost-serialization-dev \
+        libboost-regex-dev \
+        libfribidi-dev \
+        libgtk2.0-dev \
+        libreadline-dev \
+        libbz2-dev \
+        liblzma-dev \
+        libhdf5-dev \
+        libpcre++-dev \
+        libpango1.0-dev \
+        libopenblas-dev \
+        liblapack-dev \
+        libudunits2-dev \
+        libv8-dev \
+        libxt-dev \
+        libgsl-dev \
+        openjdk-8-jdk \
+        pandoc \
+        proj-bin \
+        tcl \
+        tcl-dev \
+        tk \
+        tk-dev \
+        texlive \
+        texlive-fonts-extra \
+        texinfo \
+        tzdata \
+        vim \
+        wget \
+        xvfb \
+        xauth \
+        xfonts-base \
+        zlib1g-dev \
+        zip
+ 
+       
+# Download and install the latest Python version
+    PYTHON_VERSION=3.12.0
+    wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz
+    tar -xzf Python-${PYTHON_VERSION}.tgz
+    cd Python-${PYTHON_VERSION}
+    ./configure --enable-optimizations
+    make -j$(nproc)
+    make altinstall
+
+    # Clean up
+    cd ..
+    rm -rf Python-${PYTHON_VERSION} Python-${PYTHON_VERSION}.tgz
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+    # Disable repository timestamp validation
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+
+
+    # Update package lists and enable required repositories
+    apt-get update
+    apt-get install -y --no-install-recommends software-properties-common
+    add-apt-repository universe
+    apt-get update
+
+    # Install Python-related packages
+    apt-get install -y --no-install-recommends \
+        python3-pip \
+        python3-dev \
+        python3-venv
+
+# Set locale
+
+
+# Install locales package
+    apt-get update && apt-get install -y --no-install-recommends locales
+
+    # Generate and set the desired locale
+    locale-gen en_US.UTF-8
+    update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+
+    # Clean up
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+
+# Clean /tmp of any previous downloads
+        rm -rf /tmp/singularity-build/*
+ 
+# Install Quarto
+        # Install Quarto
+        # export QUARTO_VERSION="1.7.31"
+        # wget https://quarto.org/download/latest/quarto-linux-amd64.deb
+
+    # Update package lists and enable required repositories
+        apt-get update
+        apt-get install -y --no-install-recommends software-properties-common
+        add-apt-repository universe
+        apt-get update
+
+    apt-get install -y --no-install-recommends \
+      gdebi-core
+      # gdebi quarto-linux-amd64.deb
+      #rm quarto-linux-amd64.deb
+
+    wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.7.31/quarto-1.7.31-linux-amd64.deb
+    dpkg -i quarto-1.7.31-linux-amd64.deb
+
+    rm quarto-1.7.31-linux-amd64.deb
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install libgit2
+        #wget -q https://github.com/libgit2/libgit2/releases/download/v1.1.0/libgit2-1.1.0.tar.gz
+        #tar -zxf libgit2-1.1.0.tar.gz
+        #cd libgit2-1.1.0
+        #mkdir build && cd build
+        #cmake ..
+        #cmake --build . --target install
+        #cd /tmp/singularity-build
+ 
+# Install PCRE2
+        #wget -q https://ftp.pcre.org/pub/pcre/pcre2-10.36.tar.gz
+        #tar -zxvf pcre2-10.36.tar.gz
+        #cd pcre2-10.36
+        #./configure
+        #make
+        #make install
+        #cd /tmp/singularity-build
+ 
+# Install R 4.5.0
+        wget -q https://cran.r-project.org/src/base/R-4/R-4.5.0.tar.gz
+        tar -zxf R-4.5.0.tar.gz
+        cd R-4.5.0
+        ./configure
+        make
+        make install
+        cd /tmp/singularity-build
+ 
+# Cleanup
+    echo "Cleaning"
+    apt-get -qq clean
+    rm -rf /var/lib/apt/lists/*
+    rm -rf tmp/singularity-build/*
+
+# Install Jupyter notebook
+        echo "Installing Jupyter notebook"
+        python3 -m pip --no-cache-dir install --upgrade pip > /dev/null
+        python3 -m pip --no-cache-dir install jupyter > /dev/null
+
+        R --quiet --slave -e 'install.packages(c("IRkernel"), repos="https://cloud.r-project.org/")' > /dev/null
+        R --quiet --slave -e 'IRkernel::installspec()' > /dev/null
+
+# Install R packages
+        echo "Installing R packages"
+        R --quiet --slave -e 'install.packages("renv", repos="https://cloud.r-project.org/")' > /dev/null
+
+# Install conda
+# Set environment variables
+    export PATH=/opt/conda/bin:$PATH
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Install dependencies
+    apt-get update && apt-get install -y --no-install-recommends \
+        wget \
+        bzip2 \
+        ca-certificates \
+        libglib2.0-0 \
+        libxext6 \
+        libsm6 \
+        libxrender1 \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
+
+    # Download and install Miniconda
+    echo "Installing Miniconda..."
+
+    # Remove existing installation if it exists
+    if [ -d "/opt/conda" ]; then
+        rm -rf /opt/conda
+    fi
+
+    mkdir -p /opt/conda
+    chmod -R 777 /opt/conda
+    wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /opt/miniconda.sh
+    # Set executable permissions for the installer
+    chmod +x /tmp/miniconda.sh
+    chmod +x /opt/miniconda.sh
+    bash /opt/miniconda.sh -b -u -p /opt/conda
+    rm /opt/miniconda.sh
+
+    # Update Conda and clean up
+    /opt/conda/bin/conda update -y conda
+    /opt/conda/bin/conda clean -afy
+
+%environment
+    # Set system locale
+    PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+    LANG=C.UTF-8 LC_ALL=C.UTF-8
+    # export CXX17='g++11 -std=gnu++17 -fPIC'
+    # Set PATH for Conda
+    export PATH=/opt/conda/bin:$PATH
+
+    # Set environment variables for locale
+    export LANG=en_US.UTF-8
