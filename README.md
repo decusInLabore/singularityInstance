@@ -1,5 +1,5 @@
 # Downloading and Using the Singularity Image from Dockerhub
-This singularity container is available on dockerhub: [Link](https://hub.docker.com/r/boeings/r450.ubuntu.22.04.docker.image.with.conda)
+This singularity container is available on dockerhub: [Link](https://hub.docker.com/r/boeings/r450.ubuntu.22.04.docker.image)
 
 The image can be imported as follows:
 
