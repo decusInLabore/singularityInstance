@@ -1,4 +1,4 @@
-# Dockerhub
+# Downloading and Using the Singularity Image from Dockerhub
 This singularity container is available on dockerhub: [Link](https://hub.docker.com/r/boeings/r450.ubuntu.22.04.docker.image.with.conda)
 
 The image can be imported as follows:
@@ -11,11 +11,9 @@ singularity pull docker://boeings/r450.ubuntu.22.04.docker.image
 
 singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp r450.ubuntu.22.04.docker.image_latest.sif
 
-
-
 ```
 
-# singularityInstance
+# Starting the Singularity Image with Access to the Institute's File System
 
 Set up Ubuntu singularity Instance on a Mac. This can be done in a similary fashion on a LINUX or Windows system. 
 
