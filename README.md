@@ -1,4 +1,8 @@
+# Dockerhub
+This singularity container is available on dockerhub: [Link](https://hub.docker.com/r/boeings/r450.ubuntu.22.04.docker.image)
+
 # singularityInstance
+
 Set up Ubuntu singularity Instance on a Mac. This can be done in a similary fashion on a LINUX or Windows system. 
 
 The ready-build singularity instance can be started on nemo like so:
