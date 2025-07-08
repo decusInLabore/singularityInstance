@@ -1,11 +1,11 @@
 # Dockerhub
-This singularity container is available on dockerhub: [Link](https://hub.docker.com/r/boeings/r450.ubuntu.22.04.docker.image)
+This singularity container is available on dockerhub: [Link](https://hub.docker.com/r/boeings/r450.ubuntu.22.04.docker.image.with.conda)
 
 The image can be imported as follows:
 
 ```{bash}
 ml Singularity/3.6.4
-singularity pull docker://r450.ubuntu.22.04.docker.image
+singularity pull docker://boeings/r450.ubuntu.22.04.docker.image.with.conda
 ```
 
 # singularityInstance
