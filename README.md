@@ -4,8 +4,15 @@ This singularity container is available on dockerhub: [Link](https://hub.docker.
 The image can be imported as follows:
 
 ```{bash}
+## For R 4.5.0 (downloading the docker image to your folder - see below the option to access the singularity environment on the institute's system)
+
 ml Singularity/3.6.4
-singularity pull docker://boeings/r450.ubuntu.22.04.docker.image.with.conda
+singularity pull docker://boeings/r450.ubuntu.22.04.docker.image
+
+singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp r450.ubuntu.22.04.docker.image_latest.sif
+
+
+
 ```
 
 # singularityInstance
