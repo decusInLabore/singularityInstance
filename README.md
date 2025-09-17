@@ -42,6 +42,7 @@ Before installing vagrant, you need to install Oracle Virtual Box on your PC.
 
 Download Vagrant and install: [Link](https://developer.hashicorp.com/vagrant/install)
 
+Start the vagrant virtual machine
 
 Open the Windows command prompt do
 
