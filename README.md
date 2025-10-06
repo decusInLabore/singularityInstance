@@ -1,15 +1,25 @@
 # Downloading and Using the Singularity Image from Dockerhub
-This singularity container is available on dockerhub: [Link](https://hub.docker.com/r/boeings/r450.ubuntu.22.04.docker.image)
+This singularity container is available on dockerhub: [Link]([https://hub.docker.com/r/boeings/r450.ubuntu.22.04.docker.image](https://hub.docker.com/repository/docker/boeings/r450.python310.ubuntu.22.0)
 
-The image can be imported as follows:
+The image can be imported as follows (`--cleanenv` is optional in many settings):
 
 ```{bash}
 ## For R 4.5.0 (downloading the docker image to your folder - see below the option to access the singularity environment on the institute's system)
 
 ml Singularity/3.6.4
-singularity pull docker://boeings/r450.ubuntu.22.04.docker.image
+singularity pull docker://boeings/r450.python310.ubuntu.22.04
 
-singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp r450.ubuntu.22.04.docker.image_latest.sif
+singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp r450.python310.ubuntu.22.04_latest.sif
+
+# Start python
+python3.10
+
+# Or create venv environment in the current folder (change path if you'd like to store the venv environment files elsewhere)
+python3.10 -m venv single_cell_venv_310
+
+# Activate venv environment
+source single_cell_venv_310/bin/activate
+
 
 ```
 
