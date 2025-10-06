@@ -237,7 +237,7 @@ vagrant scp :/home/vagrant/r442.ubuntu.22.04.* .
 ```
 
 
-##Start Singularity Image
+## Start Singularity Image
 ```{bash}
 # For some R-installations, such as Seurat::SCTransform the following sequence is required:
 # mkdir -p ~/.R
@@ -245,4 +245,21 @@ vagrant scp :/home/vagrant/r442.ubuntu.22.04.* .
 
 ml Singularity/3.11.3
 singularity shell --bind  /nemo:/nemo,/camp:/camp /nemo/stp/babs/working/boeings/singularity_images/r431.ubuntu.22.04.sif;
+```
+
+## Create dockerhub image
+In the vagrant virtual machine do the following
+
+```{bash}
+singularity build --sandbox my_sandbox/ r450.python310.ubuntu.22.04.sif
+
+cd my_sandbox/
+tar -cvf r450.python310.ubuntu.22.04.tar .
+
+sudo snap install docker
+sudo docker login -u [username]
+
+sudo docker import r450.python310.ubuntu.22.04.tar r450.python310.ubuntu.22.04:latest
+sudo docker tag r450.python310.ubuntu.22.04:latest boeings/r450.python310.ubuntu.22.04:latest
+sudo docker push boeings/r450.python310.ubuntu.22.04:latest
 ```
