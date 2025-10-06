@@ -1,7 +1,7 @@
 # Downloading and Using the Singularity Image from Dockerhub
-This singularity container is available on dockerhub: [Link](https://hub.docker.com/r/boeings/r450.ubuntu.22.04.docker.image](https://hub.docker.com/repository/docker/boeings/r450.python310.ubuntu.22.0)
+This singularity container is available on dockerhub: [Link](https://hub.docker.com/repository/docker/boeings/r450.python310.ubuntu.22.0)
 
-The image can be imported as follows (`--cleanenv` is optional in many settings):
+The image can be imported as follows ( `--cleanenv` is optional in many settings):
 
 ```{bash}
 ## For R 4.5.0 (downloading the docker image to your folder - see below the option to access the singularity environment on the institute's system)
