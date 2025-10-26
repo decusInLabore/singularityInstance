@@ -3,7 +3,7 @@
 Create the following folder structure on your linux system:
 
 ```
--demo_depmap
+-demo
     ├── scripts
     ├── envs
     ├── workdir
