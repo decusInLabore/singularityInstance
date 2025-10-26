@@ -2,10 +2,13 @@
 
 Create the following folder structure on your linux system:
 
--demo_depmap-workdir
-            -scripts
-            -envs
-            -data
+```
+-demo_depmap
+    ├── scripts
+    ├── envs
+    ├── workdir
+    └── data
+```
           
 This singularity container is available on dockerhub: [Link](https://hub.docker.com/repository/docker/boeings/r450.python310.ubuntu.22.04)
 
