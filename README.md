@@ -105,12 +105,16 @@ vagrant reload --provision
 ```
 
 # Starting the vagrant LINUX machine
+```{bash}
 vagrant up
-exit
+```
+
 
 # Upload def file into instance via vagrant scp (from the host sytem - exit vagrant)
-vagrant scp r442.ubuntu.22.04.def :r442.ubuntu.22.04.def
 
+```{bash}
+vagrant scp r450.python310.ubuntu.22.04.def :r450.python310.ubuntu.22.04.def
+```
 
 
 # Log into the machine
