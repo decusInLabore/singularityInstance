@@ -26,7 +26,7 @@ singularity pull docker://boeings/r450.python310.ubuntu.22.04
 cd ../workdir
 
 # Starting the singularity container
-singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp ../envs/r450.python310.ubuntu.22.04_latest.sif
+singularity shell --cleanenv --bind <local_data_directory_1>:/local data directory_1,<local_data_directory_2>:/local data directory_2 ../envs/r450.python310.ubuntu.22.04_latest.sif
 
 # Or create venv environment in the current folder (change path if you'd like to store the venv environment files elsewhere)
 python3.10 -m venv ../envs/demo_venv_310
@@ -52,10 +52,10 @@ ml Singularity/3.6.4
 ## --cleanenv is optional. It prevents the transfer of host system environmental variables into the singularity container.
 
 ## For R 4.3.1
-singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp /flask/apps/containers/all-singularity-images/r431.ubuntu.22.04.sif;
+singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r431.ubuntu.22.04.sif;
 
 ## For R 4.5.0
-singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp /flask/apps/containers/all-singularity-images/r450.ubuntu.22.04.sif;
+singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r450.ubuntu.22.04.sif;
 ```
 
 ## Vagrant installation 
