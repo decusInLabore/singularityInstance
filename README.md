@@ -280,5 +280,14 @@ sudo docker login -u [username]
 
 sudo docker import r450.python310.ubuntu.22.04.v3.tar r450.python310.ubuntu.22.04.v3:latest
 sudo docker tag r450.python310.ubuntu.22.04.v3:latest boeings/r450.python310.ubuntu.22.04.v3:latest
+
+# List your images to confirm the import
+sudo docker images
+
+# Tag the imported image with your username
+sudo docker tag r450.python310.ubuntu.22.04.v3:latest boeings/r450.python310.ubuntu.22.04.v3:latest
+
+# Now push it
 sudo docker push boeings/r450.python310.ubuntu.22.04.v3:latest
+
 ```
