@@ -270,15 +270,15 @@ singularity shell --bind  /nemo:/nemo,/camp:/camp /nemo/stp/babs/working/boeings
 In the vagrant virtual machine do the following
 
 ```{bash}
-singularity build --sandbox my_sandbox/ r450.python310.ubuntu.22.04.sif
+singularity build --sandbox my_sandbox/ r450.python310.ubuntu.22.04.V3.sif
 
 cd my_sandbox/
-tar -cvf r450.python310.ubuntu.22.04.tar .
+tar -cvf r450.python310.ubuntu.22.04.V3.tar .
 
 sudo snap install docker
 sudo docker login -u [username]
 
-sudo docker import r450.python310.ubuntu.22.04.tar r450.python310.ubuntu.22.04:latest
-sudo docker tag r450.python310.ubuntu.22.04:latest boeings/r450.python310.ubuntu.22.04:latest
-sudo docker push boeings/r450.python310.ubuntu.22.04:latest
+sudo docker import r450.python310.ubuntu.22.04.V3.tar r450.python310.ubuntu.22.04:latest
+sudo docker tag r450.python310.ubuntu.22.04.V3:latest boeings/r450.python310.ubuntu.22.04.V3:latest
+sudo docker push boeings/r450.python310.ubuntu.22.04.V3:latest
 ```
