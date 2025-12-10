@@ -270,7 +270,7 @@ singularity shell --bind  /nemo:/nemo,/camp:/camp /nemo/stp/babs/working/boeings
 In the vagrant virtual machine do the following
 
 ```{bash}
-singularity build --sandbox my_sandbox/ r450.python310.ubuntu.22.04.V3.sif
+singularity build --sandbox my_sandbox/ r450.python310.ubuntu.22.04.v3.sif
 
 cd my_sandbox/
 tar -cvf r450.python310.ubuntu.22.04.V3.tar .
