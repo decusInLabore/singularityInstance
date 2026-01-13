@@ -105,6 +105,49 @@ export RENV_PATHS_CACHE=/nemo/stp/babs/working/boeings/package_caches/renv/cache
 export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
 ```
 
+## Starting the jupyter notebook
+Now we're ready to start the jupyter notebook server
+
+```{bash}
+jupyter notebook --no-browser --port=8888 --ip=127.0.0.1
+```
+
+Copy the URL that's displayed in the terminal window and paste it into a webbroswer on your computer. Here is an <b>example</b> what that URL can look like:
+`http://127.0.0.1:8888/tree?token=6a671b92eac9d09f28971964ba1751147007844d2a688817`
+
+In your webbrowser, after copying and pasting the URL displayed on the cluster, open the 
+`/singularityInstance/example_python_R_notebooks/Seurat_to_anndata_conversion.ipynb` file by double-clicking it. To avoid clashes with other users, save the notebook under a new name.
+
+Once you're down with work
+* Save your jupyter notebook
+* Close the webbrowser window
+* Go to the terminal and shut-down the jupyter server using `Ctrl-C`
+
+## Trouble shooting
+If the jupyterserver does not start, it might be necessary to install on the cluster, in the venv environment the following packages.
+
+```{}
+pip install jupyter notebook jupyterlab
+```
+
+If you see something like below, you are likely to have a browser window still open that tries to connect to the jupyter server you've just shut down. 
+```
+channel 3: open failed: connect failed: Connection refused
+channel 3: open failed: connect failed: Connection refused
+channel 3: open failed: connect failed: Connection refused
+channel 3: open failed: connect failed: Connection refused
+channel 3: open failed: connect failed: Connection refused
+```
+
+When starting up a new project, we might need to install the jupyter notebook kernel in the renv package environment like so (after starting R in the singularity container).
+```{r}
+renv::install('IRkernel')
+renv::snapshot()
+```
+This only needs to be done once. 
+
+
+
 
 # Instructions to create a new, modified container
 
