@@ -10,7 +10,10 @@ Create the following folder structure on your linux system:
     └── data
 ```
           
-This singularity container is available on dockerhub: [Link](https://hub.docker.com/repository/docker/boeings/r450.python310.ubuntu.22.04)
+This singularity container is available on dockerhub: [Link](https://hub.docker.com/repository/docker/boeings/r450.python310.ubuntu.22.04). Within the institute, it also is available at the path in the file systme below. There is no need to copy the container.
+```
+/flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
+```
 
 The image can be imported as follows ( `--cleanenv` is optional in many settings):
 
@@ -26,7 +29,9 @@ singularity pull docker://boeings/r450.python310.ubuntu.22.04
 cd ../workdir
 
 # Starting the singularity container
-singularity shell --cleanenv --bind <local_data_directory_1>:/local data directory_1,<local_data_directory_2>:/local data directory_2 ../envs/r450.python310.ubuntu.22.04_latest.sif
+singularity shell --bind <local_data_directory_1>:/local data directory_1,<local_data_directory_2>:/local data directory_2 ../envs/r450.python310.ubuntu.22.04_latest.sif
+
+If the above command causes issues, add the `--cleanenv` flag
 
 # Or create venv environment in the current folder (change path if you'd like to store the venv environment files elsewhere)
 python3.10 -m venv ../envs/demo_venv_310
@@ -40,7 +45,7 @@ python
 
 ```
 
-# Starting the Singularity Image with Access to the Institute's File System
+# Starting the Singularity Image on the Institute's File System
 
 Set up Ubuntu singularity Instance on a Mac. This can be done in a similary fashion on a LINUX or Windows system. 
 
@@ -55,7 +60,7 @@ ml Singularity/3.6.4
 singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r431.ubuntu.22.04.sif;
 
 ## For R 4.5.0
-singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r450.ubuntu.22.04.sif;
+singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
 ```
 
 ## Vagrant installation 
