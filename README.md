@@ -1,3 +1,6 @@
+# Singularity image to run R and python
+This repository provides a container solution to run R and python together for data analyses. 
+
 # Downloading and Using the Singularity Image from Dockerhub and setting up the file structure
 
 Create the following folder structure on your linux system:
@@ -38,6 +41,9 @@ python3.10 -m venv ../envs/demo_venv_310
 
 # Activate venv environment
 source ../envs/demo_venv_310/bin/activate
+
+You can now populate the venv environment yourself using `pip install [python package name]` or download the provided venv.lock file and do
+```pip install venv.lock```
 
 # Start python
 python
