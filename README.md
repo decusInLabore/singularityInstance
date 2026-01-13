@@ -31,7 +31,7 @@ cd envs
 ml Singularity/3.6.4
 singularity pull docker://boeings/r450.python310.ubuntu.22.04
 
-cd ../workdir
+cd ../scripts
 ```
 
 ## Starting the singularity container
@@ -81,7 +81,7 @@ lsof -ti:8888 | xargs kill -9
 ```
 
 ```{bash}
-cd workdir
+cd scripts
 
 ml Singularity/3.6.4
 
