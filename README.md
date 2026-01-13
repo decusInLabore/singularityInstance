@@ -20,6 +20,8 @@ This singularity container is available on dockerhub: [Link](https://hub.docker.
 
 The image can be imported as follows ( `--cleanenv` is optional in many settings):
 
+# Start the container on an external file sytem
+
 ```{bash}
 ## For R 4.5.0 (downloading the docker image to your folder - see below the option to access the singularity environment on the institute's system)
 
@@ -32,7 +34,7 @@ singularity pull docker://boeings/r450.python310.ubuntu.22.04
 cd ../workdir
 ```
 
-# Starting the singularity container
+## Starting the singularity container
 ```{bash}
 singularity shell --bind <local_data_directory_1>:/local data directory_1,<local_data_directory_2>:/local data directory_2 ../envs/r450.python310.ubuntu.22.04_latest.sif
 
@@ -44,7 +46,7 @@ If the above command causes issues, add the `--cleanenv` flag
 python3.10 -m venv ../envs/demo_venv_310
 ```
 
-# Activate venv environment
+## Activate venv environment
 ```{bash}
 source ../envs/demo_venv_310/bin/activate
 ```
@@ -52,13 +54,11 @@ source ../envs/demo_venv_310/bin/activate
 You can now populate the venv environment yourself using `pip install [python package name]` or download the provided venv.lock file and do
 ```pip install venv.lock```
 
-# Start python
+## Start python
 ```{bash}
 python
 ```
 
-
-```
 
 # Starting the Singularity Image on the Institute's File System
 
@@ -79,6 +79,7 @@ ml Singularity/3.6.4
 singularity shell --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
 
 In case there are issues with the above commands in your area, try adding the `--cleanenv` flag to the `singularity shell` command.
+```
 
 ## Activating the venv environment
 
@@ -102,6 +103,9 @@ export RENV_PATHS_LIBRARY=/nemo/stp/babs/working/boeings/package_caches/R/librar
 export RENV_PATHS_CACHE=/nemo/stp/babs/working/boeings/package_caches/renv/cache/
 export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
 ```
+
+
+# Instructions to create a new, modified container
 
 ## Vagrant installation 
 
