@@ -53,7 +53,7 @@ source ../envs/demo_venv_310/bin/activate
 ```
 
 You can now populate the venv environment yourself using `pip install [python package name]` or download the provided venv.lock file and do
-```pip install venv.lock```
+```pip install -r venv.lock```
 
 ## Start python
 ```{bash}
