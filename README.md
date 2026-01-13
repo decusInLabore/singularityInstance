@@ -57,18 +57,27 @@ Set up Ubuntu singularity Instance on a Mac. This can be done in a similary fash
 
 The ready-build singularity instance can be started on nemo like so:
 
+## Starting the singularity container
+
 ```{bash}
+cd workdir
+
 ml Singularity/3.6.4
 
 ## --cleanenv is optional. It prevents the transfer of host system environmental variables into the singularity container.
 
-## For R 4.3.1
-singularity shell --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r431.ubuntu.22.04.sif;
-
 ## For R 4.5.0
 singularity shell --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
 
-In case there are issues with the above commands in your area, try adding the `--cleanenv` flag to the `singularity shell` command. 
+In case there are issues with the above commands in your area, try adding the `--cleanenv` flag to the `singularity shell` command.
+
+## Activating the venv environment
+
+## Setting R caches
+export RENV_PATHS_LIBRARY=/nemo/stp/babs/working/boeings/package_caches/R/library/
+export RENV_PATHS_CACHE=/nemo/stp/babs/working/boeings/package_caches/renv/cache/
+export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
+
 ```
 
 ## Vagrant installation 
