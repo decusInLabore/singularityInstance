@@ -67,7 +67,18 @@ Set up Ubuntu singularity Instance on a Mac. This can be done in a similary fash
 
 The ready-build singularity instance can be started on nemo like so:
 
-## Starting the singularity container
+## Starting the singularity container and jupyter notebook
+
+To make sure we can start the jupyter notebook, we need to make sure that the 8888 port is used to tunnel into NEMO as well as the singularity container. This will become easier once this is set up on the onDemand system. 
+
+When logging into NEMO or the BABS nodes, make sure to specify the 8888 port, like so:
+```{bash}
+ssh -L 8888:localhost:8888 boeings@babs003.nemo.thecrick.org
+```
+
+```{bash}
+lsof -ti:8888 | xargs kill -9
+```
 
 ```{bash}
 cd workdir
@@ -106,11 +117,6 @@ export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
 ```
 
 ## Starting the jupyter notebook
-Before we start the jupyter notebook server, we'll make sure that our desired port is available: 
-```{bash}
-lsof -ti:8888 | xargs kill -9
-```
-
 Now we're ready to start the jupyter notebook server
 ```{bash}
 jupyter notebook --no-browser --port=8888 --ip=127.0.0.1
