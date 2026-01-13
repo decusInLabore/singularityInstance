@@ -106,8 +106,12 @@ export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
 ```
 
 ## Starting the jupyter notebook
-Now we're ready to start the jupyter notebook server
+Before we start the jupyter notebook server, we'll make sure that our desired port is available: 
+```{bash}
+lsof -ti:8888 | xargs kill -9
+```
 
+Now we're ready to start the jupyter notebook server
 ```{bash}
 jupyter notebook --no-browser --port=8888 --ip=127.0.0.1
 ```
