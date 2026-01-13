@@ -37,9 +37,10 @@ cd ../workdir
 ## Starting the singularity container
 ```{bash}
 singularity shell --bind <local_data_directory_1>:/local data directory_1,<local_data_directory_2>:/local data directory_2 ../envs/r450.python310.ubuntu.22.04_latest.sif
+```
 
 If the above command causes issues, add the `--cleanenv` flag
-```
+
 
 ```{bash}
 # Or create venv environment in the current folder (change path if you'd like to store the venv environment files elsewhere)
