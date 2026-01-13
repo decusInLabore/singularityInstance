@@ -30,23 +30,32 @@ ml Singularity/3.6.4
 singularity pull docker://boeings/r450.python310.ubuntu.22.04
 
 cd ../workdir
+```
 
 # Starting the singularity container
+```{bash}
 singularity shell --bind <local_data_directory_1>:/local data directory_1,<local_data_directory_2>:/local data directory_2 ../envs/r450.python310.ubuntu.22.04_latest.sif
 
 If the above command causes issues, add the `--cleanenv` flag
+```
 
+```{bash}
 # Or create venv environment in the current folder (change path if you'd like to store the venv environment files elsewhere)
 python3.10 -m venv ../envs/demo_venv_310
+```
 
 # Activate venv environment
+```{bash}
 source ../envs/demo_venv_310/bin/activate
+```
 
 You can now populate the venv environment yourself using `pip install [python package name]` or download the provided venv.lock file and do
 ```pip install venv.lock```
 
 # Start python
+```{bash}
 python
+```
 
 
 ```
