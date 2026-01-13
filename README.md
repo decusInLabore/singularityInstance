@@ -63,10 +63,12 @@ ml Singularity/3.6.4
 ## --cleanenv is optional. It prevents the transfer of host system environmental variables into the singularity container.
 
 ## For R 4.3.1
-singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r431.ubuntu.22.04.sif;
+singularity shell --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r431.ubuntu.22.04.sif;
 
 ## For R 4.5.0
-singularity shell --cleanenv --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
+singularity shell --bind /nemo:/nemo,/camp:/camp,/flask:/flask /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
+
+In case there are issues with the above commands in your area, try adding the `--cleanenv` flag to the `singularity shell` command. 
 ```
 
 ## Vagrant installation 
