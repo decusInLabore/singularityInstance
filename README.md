@@ -73,11 +73,25 @@ In case there are issues with the above commands in your area, try adding the `-
 
 ## Activating the venv environment
 
+Either create a new venv environment in the envs folder:
+```{bash}
+python3.10 -m venv ../envs/demo_venv_310
+```
+
+Or simply activate a venv environment if it already exists in the envs folder or elsewhere on your file system:
+
+```{bash}
+source ../envs/demo_venv_310/bin/activate
+```
+
+You can now populate the venv environment yourself using `pip install [python package name]` or download the provided venv.lock file and do
+```pip install venv.lock```
+
 ## Setting R caches
+```{R}
 export RENV_PATHS_LIBRARY=/nemo/stp/babs/working/boeings/package_caches/R/library/
 export RENV_PATHS_CACHE=/nemo/stp/babs/working/boeings/package_caches/renv/cache/
 export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
-
 ```
 
 ## Vagrant installation 
