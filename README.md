@@ -49,7 +49,7 @@ python3.10 -m venv ../envs/demo_venv_310
 
 ## Activate venv environment
 ```{bash}
-source ../envs/demo_venv_310/bin/activate
+source /nemo/stp/babs/working/boeings/projects/sahaie/rebecca.lee/608_R_python_conversions/envs/demo_venv_310/bin/activate
 ```
 
 You can now populate the venv environment yourself using `pip install [python package name]` or download the provided venv.lock file and do
@@ -103,7 +103,7 @@ python3.10 -m venv ../envs/demo_venv_310
 Or simply activate a venv environment if it already exists in the envs folder or elsewhere on your file system:
 
 ```{bash}
-source ../envs/demo_venv_310/bin/activate
+source /nemo/stp/babs/working/boeings/projects/sahaie/rebecca.lee/608_R_python_conversions/envs/demo_venv_310/bin/activate
 ```
 
 You can now populate the venv environment yourself using `pip install [python package name]` or download the provided venv.lock file and do
