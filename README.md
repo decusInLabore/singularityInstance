@@ -32,6 +32,8 @@ ml Singularity/3.6.4
 singularity pull docker://boeings/r450.python310.ubuntu.22.04
 
 cd ../scripts
+
+git clone git@github.com:decusInLabore/singularityInstance.git
 ```
 
 ## Starting the singularity container
