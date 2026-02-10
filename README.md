@@ -218,7 +218,7 @@ vagrant up
 # Upload def file into instance via vagrant scp (from the host sytem - exit vagrant)
 
 ```{bash}
-vagrant scp r450.python310.ubuntu.22.04.def :r450.python310.ubuntu.22.04.def
+vagrant scp :r450.python310.ubuntu.22.04.def r450.python310.ubuntu.22.04.def
 ```
 
 
