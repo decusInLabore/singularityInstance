@@ -125,6 +125,7 @@ source ../envs/demo_venv_310/bin/activate
 ### 5. Set R caches
 
 ```bash
+export R_LIBS_USER=/nemo/lab/rouhanif/home/users/boeings/R/library/
 export RENV_PATHS_LIBRARY=/nemo/stp/babs/working/boeings/package_caches/R/library/
 export RENV_PATHS_CACHE=/nemo/stp/babs/working/boeings/package_caches/renv/cache/
 export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
