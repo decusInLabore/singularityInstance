@@ -14,6 +14,7 @@ From: ubuntu:22.04
         - code-server (VS Code in browser)
         - Quarto
 	        - Miniconda
+        - Claude Science (run with: apptainer run <sif> science)
 
 %post
     # Set non-interactive mode
@@ -46,6 +47,7 @@ From: ubuntu:22.04
         libunwind-dev \
         libavfilter-dev \
         libgdal-dev gdal-bin \
+        libgeos-dev libproj-dev \
         libjpeg-dev libjpeg-turbo8-dev libpng-dev libtiff-dev \
         libatlas-base-dev libopenblas-dev liblapack-dev libblas-dev \
         libxml2-dev libcairo2-dev libeigen3-dev \
@@ -119,10 +121,16 @@ From: ubuntu:22.04
     # Install R packages (including limma from Bioconductor)
     R --quiet --slave -e 'install.packages(c("IRkernel", "renv", "quarto","remotes"), repos="https://cloud.r-project.org/")'
     R --quiet --slave -e "if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager', repos='https://cloud.r-project.org/'); BiocManager::install('limma')"
-    # optional: provide github token
-    # export GITHUB_PAT=ToKeN
-    R --quiet --slave -e 'remotes::install_github("rstudio/reticulate")'
-    R --quiet --slave -e 'remotes::install_github("cellgeni/sceasy")'
+    # reticulate is on CRAN -- installing it this way avoids the GitHub API
+    # (remotes::install_github hits api.github.com, which rate-limits
+    # unauthenticated requests to 60/hour per source IP and can fail mid-build)
+    R --quiet --slave -e 'install.packages("reticulate", repos="https://cloud.r-project.org/")'
+    # sceasy has no CRAN/Bioconductor release, so fetch its tarball directly from
+    # codeload.github.com (a plain archive download, not the rate-limited REST API)
+    # and install from the local file -- no GitHub token needed, ever
+    wget -q https://github.com/cellgeni/sceasy/archive/refs/heads/master.tar.gz -O /tmp/sceasy.tar.gz
+    R --quiet --slave -e 'remotes::install_local("/tmp/sceasy.tar.gz")'
+    rm /tmp/sceasy.tar.gz
     # ...existing code...
 
     # Configure locale
@@ -197,7 +205,32 @@ From: ubuntu:22.04
     wget -q https://github.com/quarto-dev/quarto-cli/releases/download/v1.8.27/quarto-1.8.27-linux-amd64.deb
     dpkg -i quarto-1.8.27-linux-amd64.deb
     rm quarto-1.8.27-linux-amd64.deb
-   
+
+    # Build bubblewrap >=0.8.0 from source (Ubuntu 22.04's apt package is too old;
+    # Claude Science's sandbox refuses to start on bubblewrap <0.8.0)
+    cd /tmp/singularity-build
+    apt-get -qq update
+    apt-get install -y --no-install-recommends meson ninja-build libcap-dev socat
+    git clone --branch v0.12.0 --depth 1 https://github.com/containers/bubblewrap.git
+    cd bubblewrap
+    meson setup --prefix=/usr --buildtype=release -Dman=disabled _build
+    ninja -C _build
+    ninja -C _build install
+    cd /tmp/singularity-build
+    rm -rf bubblewrap
+    bwrap --version
+
+    # Install Claude Science CLI system-wide
+    export HOME=/root
+    curl -fsSL https://claude.ai/install-claude-science.sh | bash
+    cp /root/.local/bin/claude-science /usr/local/bin/claude-science
+    chmod +x /usr/local/bin/claude-science
+    # claude-science runs on Bun, which requires AVX2; some build VMs (e.g. VirtualBox
+    # guests without AVX2 passthrough) crash with SIGILL running it here even though the
+    # binary is fine and will run correctly on real hardware (e.g. the HPC cluster), so
+    # don't let this check fail the whole build
+    claude-science --version || echo "WARNING: claude-science --version crashed in this build environment (likely missing AVX2 in the build VM's virtual CPU) -- binary is installed; verify on target hardware"
+
 %environment
     export PATH=/opt/conda/bin:/usr/local/bin:$PATH
     export R_HOME=/usr/local/lib/R
@@ -209,6 +242,9 @@ From: ubuntu:22.04
     #!/bin/bash
     if [ "$1" = "jupyter" ]; then
         jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+    elif [ "$1" = "science" ]; then
+        shift
+        claude-science serve --no-browser "$@"
     else
         code-server --bind-addr 0.0.0.0:8080 --auth none
     fi
