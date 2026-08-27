@@ -1,0 +1,214 @@
+BootStrap: docker
+From: ubuntu:22.04
+ 
+%labels
+    APPLICATION_NAME R 4.5.0 and Python 3.10 on Ubuntu 22.04
+    AUTHOR_Name Stefan Boeing
+    YEAR 2025
+
+%help
+    This container contains:
+        - R 4.5.0 with shared library support (for rpy2)
+        - Python 3.10
+        - Jupyter Lab/Notebook with R kernel
+        - code-server (VS Code in browser)
+        - Quarto
+	        - Miniconda
+
+%post
+    # Set non-interactive mode
+    export DEBIAN_FRONTEND=noninteractive
+    
+    # Create build directory
+    mkdir -p /tmp/singularity-build
+    cd /tmp/singularity-build
+    
+    # Configure timezone
+    ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+    
+    # Disable repository timestamp validation (do this early)
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+    
+    # Initial system update
+    apt-get -qq update
+    apt-get -qq install -y --no-install-recommends tzdata apt-utils software-properties-common
+    apt-get -qq update
+    apt-get -y --no-install-recommends --fix-missing upgrade
+    apt-get -qq update
+    
+    # Install all system dependencies (consolidated, no duplicates, plus missing R build libraries)
+    apt-get install -y --no-install-recommends --fix-missing \
+        bash coreutils passwd \
+        autoconf automake build-essential cmake libtool \
+        gcc g++ gfortran \
+        ca-certificates curl wget git git-lfs fuse \
+        bzip2 zip unzip zlib1g-dev \
+        libunwind-dev \
+        libavfilter-dev \
+        libgdal-dev gdal-bin \
+        libjpeg-dev libjpeg-turbo8-dev libpng-dev libtiff-dev \
+        libatlas-base-dev libopenblas-dev liblapack-dev libblas-dev \
+        libxml2-dev libcairo2-dev libeigen3-dev \
+        libcupti-dev libpcre2-dev libpcre3-dev libpcre++-dev libpcre++0v5 \
+        libssl-dev libcurl4-openssl-dev apt-transport-https \
+        libboost-dev libboost-system-dev libboost-thread-dev \
+        libboost-serialization-dev libboost-regex-dev \
+        libfribidi-dev libgtk2.0-dev libpango1.0-dev \
+        libreadline-dev libreadline8 libbz2-dev libbz2-1.0 liblzma-dev \
+        libhdf5-dev libudunits2-dev libnode-dev \
+        libxt-dev libx11-dev libx11-6 \
+        libgsl-dev libzmq3-dev \
+        openjdk-8-jdk \
+        pandoc proj-bin \
+        tcl tcl-dev tk tk-dev \
+        texlive texlive-fonts-extra texlive-xetex texlive-latex-extra \
+        texinfo \
+        vim xvfb xauth xorg xfonts-base \
+        python3-pip python3-dev python3-venv \
+        libffi-dev libsqlite3-dev libncurses5-dev libncursesw5-dev libncurses-dev \
+        libtbb-dev libglpk-dev libfontconfig1-dev libharfbuzz-dev libfreetype6-dev \
+        libxslt1-dev libpq-dev libkrb5-dev libdbus-1-dev libssh2-1-dev \
+        libopenmpi-dev pkg-config \
+        libgmp-dev libmpfr-dev \
+        libssl3 libxml2 libpng16-16 libtiff5 \
+        locales gdebi-core \
+        nvidia-cuda-toolkit \
+        libicu-dev libtcl8.6 libtk8.6 libjpeg62 libjpeg-turbo8 liblzma5 libpcre2-8-0 libxt6 libgsl27 libgmp10 libmpfr6 libblas3 liblapack3 libopenblas-base libudunits2-0 libzmq5 libdbus-1-3 libssh2-1 libpq5 libkrb5-3 libncurses6 libncursesw6 libsqlite3-0 libffi7
+    
+    # Build R 4.5.0 from source (move earlier, before cleanup)
+    cd /tmp/singularity-build
+    wget -q https://cran.r-project.org/src/base/R-4/R-4.5.0.tar.gz
+    tar -zxf R-4.5.0.tar.gz
+    cd R-4.5.0
+    make distclean || true
+    ./configure --prefix=/usr/local --enable-R-shlib --with-x=no --with-blas="-lblas" --with-lapack="-llapack"
+    make -j$(nproc)
+    make install
+    # Verify libR.so and headers
+    ls -la /usr/local/lib/R/lib/libR.so || echo "ERROR: libR.so not created!"
+    ls /usr/local/lib/R/include/R.h || echo "ERROR: R.h not found!"
+
+    # Patch R.h to restore Calloc/Free macros for limma compatibility, with error checking and log output
+    awk '/#define R_alloc/ && !x {print "#ifndef Calloc\n#define Calloc(n, t)  (t *) R_chk_calloc((size_t) (n), sizeof(t))\n#endif\n#ifndef Free\n#define Free(p)  (void) free((void *)(p))\n#endif"; x=1} 1' /usr/local/lib/R/include/R.h > /usr/local/lib/R/include/R.h.patched
+    if grep -q 'Calloc' /usr/local/lib/R/include/R.h.patched; then
+        mv /usr/local/lib/R/include/R.h.patched /usr/local/lib/R/include/R.h
+        echo "Patch applied: Calloc/Free macros inserted in R.h"
+    else
+        echo "Patch failed: Calloc/Free macros not found in R.h.patched"
+        cat /usr/local/lib/R/include/R.h.patched
+        exit 1
+    fi
+
+    # Symlink system LAPACK and BLAS to Rs lib directory for compatibility
+    BLAS_SO=$(ldconfig -p | grep 'libblas.so' | head -n1 | awk '{print $4}')
+    LAPACK_SO=$(ldconfig -p | grep 'liblapack.so' | head -n1 | awk '{print $4}')
+    if [ -n "$BLAS_SO" ] && [ -d "/usr/local/lib/R/lib" ]; then
+      ln -sf "$BLAS_SO" /usr/local/lib/R/lib/libRblas.so
+    fi
+    
+    if [ -n "$LAPACK_SO" ] && [ -d "/usr/local/lib/R/lib" ]; then
+      ln -sf "$LAPACK_SO" /usr/local/lib/R/lib/libRlapack.so
+    fi
+
+    cd /tmp/singularity-build
+    rm -rf R-4.5.0*
+    # Set R environment for package installations
+    export R_HOME=/usr/local/lib/R
+    export LD_LIBRARY_PATH=/usr/local/lib/R/lib:$LD_LIBRARY_PATH
+    export PATH=/usr/local/bin:$PATH
+    # Install R packages (including limma from Bioconductor)
+    R --quiet --slave -e 'install.packages(c("IRkernel", "renv", "quarto","remotes"), repos="https://cloud.r-project.org/")'
+    R --quiet --slave -e "if (!requireNamespace('BiocManager', quietly=TRUE)) install.packages('BiocManager', repos='https://cloud.r-project.org/'); BiocManager::install('limma')"
+    # optional: provide github token
+    # export GITHUB_PAT=ToKeN
+    R --quiet --slave -e 'remotes::install_github("rstudio/reticulate")'
+    R --quiet --slave -e 'remotes::install_github("cellgeni/sceasy")'
+    # ...existing code...
+
+    # Configure locale
+    locale-gen en_US.UTF-8
+    update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+    
+    # Install Python 3.10 from source
+    PYTHON_VERSION=3.10.0
+    cd /tmp/singularity-build
+    wget -q https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz
+    tar -xzf Python-${PYTHON_VERSION}.tgz
+    cd Python-${PYTHON_VERSION}
+    ./configure --enable-optimizations
+    make -j$(nproc)
+    make altinstall
+    cd /tmp/singularity-build
+    rm -rf Python-${PYTHON_VERSION}* 
+   
+    # Install pip for Python 3.10
+    python3.10 -m ensurepip --upgrade
+    python3.10 -m pip install --upgrade pip setuptools wheel
+    
+    # Install rpy2 (requires R with libR.so)
+    python3.10 -m pip install --no-cache-dir rpy2
+    
+    # Install Jupyter stack
+    python3.10 -m pip install --no-cache-dir \
+        jupyter \
+        notebook \
+        jupyterlab \
+        ipykernel
+    
+    # Register Python 3.10 kernel
+    python3.10 -m ipykernel install --name python3.10 --display-name "Python 3.10"
+
+    # Now install IRkernel spec (after Jupyter is installed)
+    R --quiet --slave -e 'IRkernel::installspec()'
+
+    # Install AWS CLI v2
+    curl -sSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscliv2.zip
+    unzip -q /tmp/awscliv2.zip -d /tmp
+    /tmp/aws/install
+    rm -rf /tmp/aws /tmp/awscliv2.zip
+    
+    # Install Miniconda
+    mkdir -p /opt/conda
+    chmod -R 777 /opt/conda
+    wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh
+    bash /tmp/miniconda.sh -b -u -p /opt/conda
+    rm /tmp/miniconda.sh
+
+    # Accept Terms of Service for Conda channels
+    /opt/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+    /opt/conda/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
+    /opt/conda/bin/conda config --set channel_priority strict
+    /opt/conda/bin/conda update -y conda
+    /opt/conda/bin/conda clean -afy
+
+    # Final cleanup
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+    rm -rf /tmp/singularity-build/*
+    # ...existing code...
+    export CODE_SERVER_VERSION="4.104.0"
+    wget -qO /tmp/code-server.deb "https://github.com/coder/code-server/releases/download/v${CODE_SERVER_VERSION}/code-server_${CODE_SERVER_VERSION}_amd64.deb"
+    apt-get install -y --no-install-recommends /tmp/code-server.deb
+    rm /tmp/code-server.deb
+    
+    # Install Quarto
+    cd /tmp/singularity-build
+    wget -q https://github.com/quarto-dev/quarto-cli/releases/download/v1.8.27/quarto-1.8.27-linux-amd64.deb
+    dpkg -i quarto-1.8.27-linux-amd64.deb
+    rm quarto-1.8.27-linux-amd64.deb
+   
+%environment
+    export PATH=/opt/conda/bin:/usr/local/bin:$PATH
+    export R_HOME=/usr/local/lib/R
+    export LD_LIBRARY_PATH=/usr/local/lib/R/lib:$LD_LIBRARY_PATH
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+
+%runscript
+    #!/bin/bash
+    if [ "$1" = "jupyter" ]; then
+        jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+    else
+        code-server --bind-addr 0.0.0.0:8080 --auth none
+    fi
