@@ -93,16 +93,26 @@ pip install -r venv.lock
 
 ## Institute Cluster (NEMO) Setup
 
-### 1. SSH with port forwarding
+### 1. Start the container
 
 ```bash
-ssh -L 8888:localhost:8888 -L 8889:localhost:8889 boeings@login.nemo.thecrick.org
-# or
-ssh -L 8888:localhost:8888 -L 8889:localhost:8889 boeings@babs003.nemo.thecrick.org
+ssh -i ~/.ssh/id_rsa -L 8888:localhost:8888 -L 8889:localhost:8889 <username>@<node_id>
+# Crick example:
+# In a screen session, comision two connections:
+# One for the jupyter notebook via the 8888 port
+ssh -i ~/.ssh/id_rsa -L 8888:localhost:8888 boeings@gl410
 
+# One for claude on the 8889 port
+ssh -i ~/.ssh/id_rsa -L 8889:localhost:8889 boeings@gl410
 ```
 
-### 2. Start the container
+> Your public SSH key must be at `~/.ssh/id_rsa`. Adjust the path if different.
+
+Navigate to the project directory:
+
+```bash
+cd /nemo/lab/rouhanif/home/users/boeings/projects/674_snRNAseq_PSC_RPSC_N_SC25064psc/scripts/SC25064psc/analyses/Main_Analysis/
+```
 
 ```bash
 cd scripts
@@ -151,7 +161,7 @@ Copy the URL from the terminal and paste it into your browser. Example:
 http://127.0.0.1:8888/tree?token=6a671b92eac9d09f28971964ba1751147007844d2a688817
 ```
 
-#### 4. Start Claude Science on the connection with the 8889 port
+#### 4. Start Claude Science on the connection with the 8889 port (start at step 2. again on the second connection)
 
 ```bash
 claude-science serve --no-browser --dangerously-no-sandbox --port 8889
