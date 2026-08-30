@@ -96,33 +96,41 @@ pip install -r venv.lock
 ### 1. SSH with port forwarding
 
 ```bash
-ssh -L 8888:localhost:8888 boeings@babs003.nemo.thecrick.org
+ssh -L 8888:localhost:8888 -L 8889:localhost:8889 boeings@login.nemo.thecrick.org
+# or
+ssh -L 8888:localhost:8888 -L 8889:localhost:8889 boeings@babs003.nemo.thecrick.org
+
 ```
 
-### 2. Free port 8888 if needed
-
-```bash
-lsof -ti:8888 | xargs kill -9
-```
-
-### 3. Start the container
+### 2. Start the container
 
 ```bash
 cd scripts
 ml Singularity/3.6.4
+```
+
+Start the container — CPU or GPU:
+
+**Option A — CPU:**
+```bash
 singularity shell --bind /nemo:/nemo,/camp:/camp,/flask:/flask \
   /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
 ```
 
-> Add `--cleanenv` if you encounter issues.
+**Option B — GPU:**
+```bash
+singularity shell --nv --bind /nemo:/nemo,/camp:/camp,/flask:/flask \
+  /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
+```
 
-### 4. Activate venv
+
+### 4. Activate venv (optional)
 
 ```bash
 source ../envs/demo_venv_310/bin/activate
 ```
 
-### 5. Set R caches
+### 5. Set R caches (optional)
 
 ```bash
 export R_LIBS_USER=/nemo/lab/rouhanif/home/users/boeings/R/library/
@@ -131,7 +139,7 @@ export RENV_PATHS_CACHE=/nemo/stp/babs/working/boeings/package_caches/renv/cache
 export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
 ```
 
-### 6. Start Jupyter
+### 6. Start Jupyter on the connection with the 8888 port
 
 ```bash
 jupyter notebook --no-browser --port=8888 --ip=127.0.0.1
@@ -142,6 +150,13 @@ Copy the URL from the terminal and paste it into your browser. Example:
 ```
 http://127.0.0.1:8888/tree?token=6a671b92eac9d09f28971964ba1751147007844d2a688817
 ```
+
+#### 4. Start Claude Science on the connection with the 8889 port
+
+```bash
+claude-science serve --no-browser --dangerously-no-sandbox --port 8889
+```
+
 
 Open `singularityInstance/example_python_R_notebooks/Seurat_to_anndata_conversion.ipynb`. Save it under a new name before editing.
 
