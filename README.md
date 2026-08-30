@@ -95,6 +95,23 @@ pip install -r venv.lock
 
 ### 1. Start the container
 
+Start an interactive HPC session. Use CPU or GPU depending on your analysis:
+
+**CPU:**
+```bash
+srun --ntasks=1 --cpus-per-task=8 --partition=nint --time=08:00:00 --mem=256G --pty bash
+```
+
+**GPU:**
+```bash
+srun --job-name=G1 --ntasks=1 --time=16:00:00 --partition=vis --nodes=1 --gres=gpu:1 --pty --mem=200G bash
+```
+
+Note your node ID:
+```bash
+squeue -u <your_username>
+```
+
 ```bash
 ssh -i ~/.ssh/id_rsa -L 8888:localhost:8888 -L 8889:localhost:8889 <username>@<node_id>
 # Crick example:
