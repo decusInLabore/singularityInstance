@@ -212,6 +212,20 @@ renv::install('IRkernel')
 renv::snapshot()
 ```
 
+```bash
+# 1. Create the real directory on large storage
+mkdir -p /scratch/$USER/claude-science-data
+
+# 2. If ~/.claude-science already exists with data in it, move it over first
+if [ -d ~/.claude-science ] && [ ! -L ~/.claude-science ]; then
+    mv ~/.claude-science/* /scratch/$USER/claude-science-data/ 2>/dev/null
+    rmdir ~/.claude-science
+fi
+
+# 3. Symlink it
+ln -s /scratch/$USER/claude-science-data ~/.claude-science
+```
+
 ---
 
 ## Building a New Container
