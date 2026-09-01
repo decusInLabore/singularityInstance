@@ -93,36 +93,71 @@ pip install -r venv.lock
 
 ## Institute Cluster (NEMO) Setup
 
-### 1. SSH with port forwarding
+### 1. Start the container
 
+Start an interactive HPC session. Use CPU or GPU depending on your analysis:
+
+**CPU:**
 ```bash
-ssh -L 8888:localhost:8888 boeings@babs003.nemo.thecrick.org
+srun --ntasks=1 --cpus-per-task=8 --partition=nint --time=08:00:00 --mem=256G --pty bash
 ```
 
-### 2. Free port 8888 if needed
-
+**GPU:**
 ```bash
-lsof -ti:8888 | xargs kill -9
+srun --job-name=G1 --ntasks=1 --time=16:00:00 --partition=vis --nodes=1 --gres=gpu:1 --pty --mem=200G bash
 ```
 
-### 3. Start the container
+Note your node ID:
+```bash
+squeue -u <your_username>
+```
+
+```bash
+ssh -i ~/.ssh/id_rsa -L 8888:localhost:8888 -L 8889:localhost:8889 <username>@<node_id>
+# Crick example:
+# In a screen session, comision two connections:
+# One for the jupyter notebook via the 8888 port
+ssh -i ~/.ssh/id_rsa -L 8888:localhost:8888 boeings@gl410
+
+# One for claude on the 8889 port
+ssh -i ~/.ssh/id_rsa -L 8889:localhost:8889 boeings@gl410
+```
+
+> Your public SSH key must be at `~/.ssh/id_rsa`. Adjust the path if different.
+
+Navigate to the project directory:
+
+```bash
+cd /nemo/lab/rouhanif/home/users/boeings/projects/674_snRNAseq_PSC_RPSC_N_SC25064psc/scripts/SC25064psc/analyses/Main_Analysis/
+```
 
 ```bash
 cd scripts
 ml Singularity/3.6.4
+```
+
+Start the container — CPU or GPU:
+
+**Option A — CPU:**
+```bash
 singularity shell --bind /nemo:/nemo,/camp:/camp,/flask:/flask \
   /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
 ```
 
-> Add `--cleanenv` if you encounter issues.
+**Option B — GPU:**
+```bash
+singularity shell --nv --bind /nemo:/nemo,/camp:/camp,/flask:/flask \
+  /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
+```
 
-### 4. Activate venv
+
+### 4. Activate venv (optional)
 
 ```bash
 source ../envs/demo_venv_310/bin/activate
 ```
 
-### 5. Set R caches
+### 5. Set R caches (optional)
 
 ```bash
 export R_LIBS_USER=/nemo/lab/rouhanif/home/users/boeings/R/library/
@@ -131,7 +166,7 @@ export RENV_PATHS_CACHE=/nemo/stp/babs/working/boeings/package_caches/renv/cache
 export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
 ```
 
-### 6. Start Jupyter
+### 6. Start Jupyter on the connection with the 8888 port
 
 ```bash
 jupyter notebook --no-browser --port=8888 --ip=127.0.0.1
@@ -142,6 +177,13 @@ Copy the URL from the terminal and paste it into your browser. Example:
 ```
 http://127.0.0.1:8888/tree?token=6a671b92eac9d09f28971964ba1751147007844d2a688817
 ```
+
+#### 4. Start Claude Science on the connection with the 8889 port (start at step 2. again on the second connection)
+
+```bash
+claude-science serve --no-browser --dangerously-no-sandbox --port 8889
+```
+
 
 Open `singularityInstance/example_python_R_notebooks/Seurat_to_anndata_conversion.ipynb`. Save it under a new name before editing.
 
@@ -168,6 +210,20 @@ Close any browser tabs still connected to a previous Jupyter session.
 ```r
 renv::install('IRkernel')
 renv::snapshot()
+```
+
+```bash
+# 1. Create the real directory on large storage
+mkdir -p /scratch/$USER/claude-science-data
+
+# 2. If ~/.claude-science already exists with data in it, move it over first
+if [ -d ~/.claude-science ] && [ ! -L ~/.claude-science ]; then
+    mv ~/.claude-science/* /scratch/$USER/claude-science-data/ 2>/dev/null
+    rmdir ~/.claude-science
+fi
+
+# 3. Symlink it
+ln -s /scratch/$USER/claude-science-data ~/.claude-science
 ```
 
 ---

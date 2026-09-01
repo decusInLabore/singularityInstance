@@ -16,6 +16,44 @@ From: ubuntu:22.04
 	        - Miniconda
         - Claude Science (run with: apptainer run <sif> science)
 
+    Claude Science updates without rebuilding this image:
+        The %post section below installs a "known-good" fallback copy of
+        claude-science into the image itself (/usr/local/bin/claude-science),
+        so the container works standalone even with no network egress.
+        However, Apptainer bind-mounts your real $HOME into the container by
+        default, and the official installer already targets ~/.local/bin,
+        which this container's PATH is configured to prefer over the
+        image's bundled copy. That means you can install/refresh the
+        *live* version on the host side of that mount, and every future
+        `apptainer run` picks it up immediately -- no rebuild required.
+
+        To install or update the host-side copy, run:
+            apptainer run <sif> science-update
+        This re-runs Anthropic's install script, writing to
+        $HOME/.local/bin/claude-science on the host. From then on, that
+        copy shadows the one baked into the image.
+
+        To check which copy is active:
+            apptainer run <sif> science-which
+
+    Nested sandbox note (avoiding --dangerously-no-sandbox):
+        Claude Science's sandbox uses bubblewrap, same as Claude Code. When
+        bubblewrap runs *nested* inside another unprivileged container
+        (this Apptainer container), it can sometimes fail to mount a fresh
+        /proc, because the outer container doesn't grant the nested user
+        namespace it wants. Anthropic's docs describe a setting for this
+        exact case in Claude Code's sandbox runtime,
+        "enableWeakerNestedSandbox", which tells the inner sandbox to bind
+        the outer container's existing /proc instead of creating its own --
+        a much narrower relaxation than disabling the sandbox outright.
+        Check `claude-science --help` and any config file under
+        ~/.claude-science for an equivalent setting before falling back to
+        --dangerously-no-sandbox. If nothing like that is exposed, the
+        remaining blocker is usually a host kernel setting
+        (kernel.unprivileged_userns_clone /
+        kernel.apparmor_restrict_unprivileged_userns), which only your HPC
+        admin can change.
+
 %post
     # Set non-interactive mode
     export DEBIAN_FRONTEND=noninteractive
@@ -220,7 +258,15 @@ From: ubuntu:22.04
     rm -rf bubblewrap
     bwrap --version
 
-    # Install Claude Science CLI system-wide
+    # Install Claude Science CLI system-wide.
+    # NOTE: this bakes a "known-good" fallback copy into the image at
+    # /usr/local/bin/claude-science, so the container still works standalone
+    # (e.g. on a compute node with no internet egress). It is NOT the copy
+    # that gets used day-to-day once a host-side install exists -- see
+    # %runscript's "science-update" action and %environment's PATH ordering,
+    # which prefer $HOME/.local/bin/claude-science (bind-mounted from the
+    # host by Apptainer) so future version upgrades don't require rebuilding
+    # this image.
     export HOME=/root
     curl -fsSL https://claude.ai/install-claude-science.sh | bash
     cp /root/.local/bin/claude-science /usr/local/bin/claude-science
@@ -237,6 +283,12 @@ From: ubuntu:22.04
     export LD_LIBRARY_PATH=/usr/local/lib/R/lib:$LD_LIBRARY_PATH
     export LANG=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
+    # Prefer a host-side (bind-mounted, persistent) claude-science install
+    # over the copy baked into the image, so `apptainer run <sif> science`
+    # picks up whatever version was last installed with "science-update",
+    # with no image rebuild involved. Falls back to /usr/local/bin's
+    # baked-in copy if $HOME/.local/bin/claude-science doesn't exist yet.
+    export PATH=$HOME/.local/bin:$PATH
 
 %runscript
     #!/bin/bash
@@ -245,6 +297,21 @@ From: ubuntu:22.04
     elif [ "$1" = "science" ]; then
         shift
         claude-science serve --no-browser "$@"
+    elif [ "$1" = "science-update" ]; then
+        # Installs/updates claude-science into $HOME/.local/bin on the HOST
+        # (Apptainer bind-mounts $HOME by default), which %environment's
+        # PATH puts ahead of the image's bundled /usr/local/bin copy. Run
+        # this any time a new Claude Science version ships -- no rebuild.
+        echo "Installing/updating claude-science into $HOME/.local/bin ..."
+        curl -fsSL https://claude.ai/install-claude-science.sh | bash
+        echo "Done. Active binary: $(command -v claude-science)"
+        claude-science --version
+    elif [ "$1" = "science-which" ]; then
+        # Shows which claude-science binary is currently active and its
+        # version, so you can confirm whether you're running the host-side
+        # (updatable) copy or the image's baked-in fallback.
+        echo "Active binary: $(command -v claude-science)"
+        claude-science --version
     else
         code-server --bind-addr 0.0.0.0:8080 --auth none
     fi
