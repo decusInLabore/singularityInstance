@@ -132,8 +132,8 @@ http://127.0.0.1:8888/tree?token=6a671b92eac9d09f28971964ba1751147007844d2a68881
 2. Connect to the interactive node through port 8888
 
 ```{bash}
-ssh -i ~/.ssh/id_rsa -L 8888:localhost:8889 <username>@<nodename>
-ssh -i ~/.ssh/id_rsa -L 8888:localhost:8889 boeings@gl410   
+ssh -i ~/.ssh/id_rsa -L 8889:localhost:8889 <username>@<nodename>
+ssh -i ~/.ssh/id_rsa -L 8889:localhost:8889 boeings@gl410   
 ```   
 
 3. Start the apptainer (singularity container) and connect to environment
