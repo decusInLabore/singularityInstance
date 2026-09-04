@@ -20,7 +20,165 @@ Run R and Python together for data analysis using a pre-built Singularity image.
 ---
 
 ## Quick Start
+### Starting a Jupyter Notebook
 
+1. Sign into NEMO from your laptop or desktop computer
+```{bash}
+# Note: When connecting to a login node, you need to make the connection to a specific, numbered node. 
+```{bash}
+ssh -L 8888:localhost:8888 -L 8889:localhost:8889 boeings@login007.nemo.thecrick.org
+```
+# or if your group has dedicated nodes
+```{bash}
+ssh -L 8888:localhost:8888 -L 8889:localhost:8889 boeings@babs003.nemo.thecrick.org
+```
+
+
+2. Start a screen session
+```{bash}
+screen
+```
+
+3. Navigate to the first screen
+
+`Ctrl`-`a` + `c`
+
+4. Start an interactive node from the first screen
+**CPU:**
+```bash
+srun --ntasks=1 --cpus-per-task=8 --partition=nint --time=08:00:00 --mem=256G --pty bash
+```
+
+**GPU:**
+## Use a GPU node only when you need to. 
+```bash
+srun --job-name=G1 --ntasks=1 --time=16:00:00 --partition=vis --nodes=1 --gres=gpu:1 --pty --mem=200G bash
+```
+
+Wait till the node starts and note the node ID:
+```{bash
+squeue -u <your_username>
+```
+3a. Start a second screen session
+`Ctrl`-`a` + `c`
+
+3b. Or move to the second screen session
+`Ctrl`-`a` + `"`
+
+
+2. Connect to the interactive node through port 8888
+
+```{bash}
+ssh -i ~/.ssh/id_rsa -L 8888:localhost:8888 <username>@<nodename>
+ssh -i ~/.ssh/id_rsa -L 8888:localhost:8888 boeings@gl410   
+```   
+
+3. Start the apptainer (singularity container) and connect to environment
+```{bash}
+cd /nemo
+
+ml Singularity/3.6.4
+```   
+
+Start the container — CPU or GPU:
+
+**Option A — CPU:**
+```bash
+singularity shell --bind /nemo:/nemo,/camp:/camp,/flask:/flask \
+  /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
+```
+
+**Option B — GPU:**
+```bash
+singularity shell --nv --bind /nemo:/nemo,/camp:/camp,/flask:/flask \
+  /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
+```
+
+Start venv environment
+```bash
+source ../envs/demo_venv_310/bin/activate
+```
+
+Define python and R caches
+
+```bash
+export R_LIBS_USER=/nemo/lab/rouhanif/home/users/boeings/R/library/
+export RENV_PATHS_LIBRARY=/nemo/stp/babs/working/boeings/package_caches/R/library/
+export RENV_PATHS_CACHE=/nemo/stp/babs/working/boeings/package_caches/renv/cache/
+export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
+```
+
+Start Jupyter on the connection with the 8888 port
+
+```bash
+jupyter notebook --no-browser --port=8888 --ip=127.0.0.1
+```
+
+Copy the URL from the terminal and paste it into your browser. Example:
+
+```
+http://127.0.0.1:8888/tree?token=6a671b92eac9d09f28971964ba1751147007844d2a688817
+```
+
+
+### Starting Claude Science
+3a. Start a second screen session
+`Ctrl`-`a` + `c`
+
+3b. Or move to the second screen session
+`Ctrl`-`a` + `"`
+
+
+2. Connect to the interactive node through port 8888
+
+```{bash}
+ssh -i ~/.ssh/id_rsa -L 8888:localhost:8889 <username>@<nodename>
+ssh -i ~/.ssh/id_rsa -L 8888:localhost:8889 boeings@gl410   
+```   
+
+3. Start the apptainer (singularity container) and connect to environment
+```{bash}
+cd /nemo
+
+ml Singularity/3.6.4
+```   
+
+Start the container — CPU or GPU:
+
+**Option A — CPU:**
+```bash
+singularity shell --bind /nemo:/nemo,/camp:/camp,/flask:/flask \
+  /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
+```
+
+**Option B — GPU:**
+```bash
+singularity shell --nv --bind /nemo:/nemo,/camp:/camp,/flask:/flask \
+  /flask/apps/containers/all-singularity-images/r450.python310.ubuntu.22.04.v3.sif
+```
+
+Start venv environment
+```bash
+source ../envs/demo_venv_310/bin/activate
+```
+
+Define python and R caches
+
+```bash
+export R_LIBS_USER=/nemo/lab/rouhanif/home/users/boeings/R/library/
+export RENV_PATHS_LIBRARY=/nemo/stp/babs/working/boeings/package_caches/R/library/
+export RENV_PATHS_CACHE=/nemo/stp/babs/working/boeings/package_caches/renv/cache/
+export RENV_PATHS_ROOT=/nemo/stp/babs/working/boeings/package_caches/renv/
+```
+
+Start claude science on the connection with the 8889 port
+
+```bash
+claude-science serve --no-browser --dangerously-no-sandbox --port 8889
+```
+
+
+## Details
 ### 1. Set up folder structure
 
 ```
@@ -96,6 +254,13 @@ pip install -r venv.lock
 ### 1. Start the container
 
 Start an interactive HPC session. Use CPU or GPU depending on your analysis:
+
+```{bash}
+# Note: When connecting to a login node, you need to make the connection to a specific, numbered node. 
+ssh -L 8888:localhost:8888 -L 8889:localhost:8889 boeings@login007.nemo.thecrick.org
+# or if your group has dedicated nodes
+ssh -L 8888:localhost:8888 -L 8889:localhost:8889 boeings@babs003.nemo.thecrick.org
+```
 
 **CPU:**
 ```bash
