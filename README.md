@@ -23,7 +23,7 @@ Run R and Python together for data analysis using a pre-built Singularity image.
 ### Starting a Jupyter Notebook
 
 1. Sign into NEMO from your laptop or desktop computer
-```{bash}
+
 # Note: When connecting to a login node, you need to make the connection to a specific, numbered node. 
 ```{bash}
 ssh -L 8888:localhost:8888 -L 8889:localhost:8889 boeings@login007.nemo.thecrick.org
